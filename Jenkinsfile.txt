@@ -19,6 +19,7 @@ node {
     // Check out code from source control.
     // -------------------------------------------------------------------------
     // from vscode
+    // pull request
     stage('checkout source') {
         checkout scm
     }
