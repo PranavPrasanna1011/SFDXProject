@@ -11,7 +11,7 @@ node {
     def SFDC_HOST_DH = env.SFDC_HOST_DH ?: "https://test.salesforce.com"
     def PACKAGE_NAME='0Ho1U000000CaUzSAK'
     def PACKAGE_VERSION
-    def Workspace=env.WORKSPACE
+    
     
 // test
    def toolbelt = tool 'toolbelt'
