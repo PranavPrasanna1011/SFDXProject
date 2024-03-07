@@ -4,16 +4,16 @@ import groovy.json.JsonSlurperClassic
 
 node {
 
-    def SF_CONSUMER_KEY='3MVG9CmdhfW8tOGAGR3D2GlWWonU.7fh.EeKrVSRiA.kEvfq9sHPTNT_u428igZseFb_yIDnA_sC5JHqIon1N'
-    def SF_USERNAME='developmenttpt@org.uk.tpt4dev'
-    def SERVER_KEY_CREDENTALS_ID='e418e862-7bc9-4ae3-a92c-5f498421409a'
+    def CONNECTED_APP_CONSUMER_KEY_DH=env.CONNECTED_APP_CONSUMER_KEY_DH
+    def HUB_ORG_DH=env.HUB_ORG_DH
+    def JWT_CRED_ID_DH=env.JWT_CRED_ID_DH
     def TEST_LEVEL='RunLocalTests'
+    def SFDC_HOST_DH = env.SFDC_HOST_DH ?: "https://test.salesforce.com"
     def PACKAGE_NAME='0Ho1U000000CaUzSAK'
     def PACKAGE_VERSION
-    def SF_INSTANCE_URL = "https://test.salesforce.com"//env.SF_INSTANCE_URL ?: "https://login.salesforce.com"
 
-    def toolbelt = tool 'toolbelt'
-
+   def toolbelt = tool 'toolbelt'
+    def SF_USERNAME
 
     // -------------------------------------------------------------------------
     // Check out code from source control.
@@ -29,16 +29,16 @@ node {
     // JWT key credentials.
     // -------------------------------------------------------------------------
     
-   // withEnv(["HOME=${env.WORKSPACE}"]) {
+    withEnv(["HOME=${env.WORKSPACE}"]) {
         
-        withCredentials([file(credentialsId: SERVER_KEY_CREDENTALS_ID, variable: 'server_key_file')]) {
+        withCredentials([file(credentialsId: JWT_CRED_ID_DH, variable: 'server.key')]) {
 
             // -------------------------------------------------------------------------
             // Authorize the Dev Hub org with JWT key and give it an alias.
             // -------------------------------------------------------------------------
 
             stage('Authorize DevHub') {
-                rc = command "${toolbelt}/sfdx force:auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --username ${SF_USERNAME} --jwtkeyfile ${server_key_file} --setdefaultdevhubusername --setalias HubOrg"
+                rc = command "${toolbelt}/sfdx force:auth:jwt:grant --instanceurl ${SFDC_HOST_DH} --clientid ${CONNECTED_APP_CONSUMER_KEY_DH} --username ${HUB_ORG_DH} --jwtkeyfile ${server.key} --setdefaultdevhubusername --setalias HubOrg"
                 if (rc != 0) {
                     error 'Salesforce dev hub org authorization failed.'
                 }
@@ -190,7 +190,7 @@ node {
                 }
             }
         }
-   // }
+    }
 }
 
 def command(script) {
